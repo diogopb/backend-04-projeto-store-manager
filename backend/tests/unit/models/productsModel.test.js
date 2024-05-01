@@ -32,6 +32,19 @@ describe('test model', function () {
     });
   });
 
+  describe('test createProduct', function () {
+    it('creates a new product and returns its id', async function () {
+      const productName = 'Armadura do Homem de Ferro';
+      const insertId = 3;
+
+      sinon.stub(connection, 'execute').resolves([{ insertId }]);
+
+      const result = await productsModel.createProduct(productName);
+
+      expect(result).to.equal(insertId);
+    });
+  });
+
   afterEach(function () {
     sinon.restore();
   });

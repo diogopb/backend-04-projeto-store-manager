@@ -15,4 +15,22 @@ describe('test controller', function () {
     expect(res).to.have.status(404);
     expect(res.body.message).to.equal('Product not found');
   });
+
+  it('creates a new product', async function () {
+    const productName = 'Armadura do Homem de Ferro';
+    const createdId = 3;
+
+    const req = { body: { name: productName } };
+    const expectedResponse = {
+      id: createdId,
+      name: productName,
+    };
+
+    productService.createProduct = async () => createdId;
+
+    const res = await chai.request(app).post('/products').send(req.body);
+
+    expect(res).to.have.status(201);
+    expect(res.body).to.deep.equal(expectedResponse);
+  });
 });

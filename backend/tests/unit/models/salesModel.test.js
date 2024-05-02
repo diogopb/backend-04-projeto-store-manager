@@ -35,6 +35,27 @@ describe('test model', function () {
     });
   });
 
+  describe('test createSale', function () {
+    describe('test insertSale', function () {
+      it('should insert sales with valid data', async function () {
+        const data = [
+          { productId: 1, quantity: 2 },
+          { productId: 2, quantity: 4 },
+        ];
+        const insertId = 1;
+        const sold = [
+          { productId: 1, quantity: 2 },
+          { productId: 2, quantity: 4 },
+        ];
+
+        sinon.stub(connection, 'execute').resolves([{ insertId }]);
+        const result = await salesModel.createSale(data);
+
+        expect(result).to.deep.equal({ id: insertId, itemsSold: sold });
+      });
+    });
+  });
+
   afterEach(function () {
     sinon.restore();
   });

@@ -31,4 +31,30 @@ const createProduct = async (req, res) => {
   res.status(201).json({ id: created, name });
 };
 
-module.exports = { getAllProducts, getProductById, createProduct };
+const updateProduct = async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  if (!name) return res.status(400).json({ message: '"name" is required' });
+  if (name.length < 5) {
+    return res
+      .status(422)
+      .json({ message: '"name" length must be at least 5 characters long' });
+  }
+
+  const existingProduct = await service.getProductById(id);
+  if (!existingProduct) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+
+  const updated = await service.updateProduct(id, name);
+
+  res.json(updated);
+};
+
+module.exports = {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+};

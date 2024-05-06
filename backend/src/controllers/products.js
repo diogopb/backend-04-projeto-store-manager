@@ -52,9 +52,22 @@ const updateProduct = async (req, res) => {
   res.json(updated);
 };
 
+const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+
+  const existingProduct = await service.getProductById(id);
+  if (!existingProduct) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+
+  await service.deleteProduct(id);
+  res.status(204).end();
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
+  deleteProduct,
 };

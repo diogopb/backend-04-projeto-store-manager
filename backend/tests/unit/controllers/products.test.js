@@ -54,6 +54,58 @@ describe('test controller', function () {
       '"name" length must be at least 5 characters long',
     );
   });
+
+  it('updates a product', async function () {
+    const productName = 'Armadura do Homem de Ferro';
+    const updatedId = 3;
+
+    const req = { params: { id: updatedId }, body: { name: productName } };
+    const expectedRes = {
+      id: updatedId,
+      name: productName,
+    };
+
+    productService.getProductById = async () => ({
+      id: updatedId,
+      name: 'Armadura do Batman',
+    });
+    productService.updateProduct = async () => ({
+      id: updatedId,
+      name: productName,
+    });
+
+    const res = await chai
+      .request(app)
+      .put(`/products/${updatedId}`)
+      .send(req.body);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.deep.equal(expectedRes);
+  });
+
+  it('deletes a product', async function () {
+    const existingProduct = 1;
+
+    productService.getProductById = async () => ({ id: existingProduct });
+
+    const res = await chai.request(app).delete(`/products/${existingProduct}`);
+
+    expect(res).to.have.status(204);
+  });
+
+  it('returns 404 when trying to delete a nonexisting product', async function () {
+    const nonexistingProduct = 99;
+
+    productService.getProductById = async () => null;
+
+    const res = await chai
+      .request(app)
+      .delete(`/products/${nonexistingProduct}`);
+
+    expect(res).to.have.status(404);
+    expect(res.body.message).to.equal('Product not found');
+  });
+
   afterEach(function () {
     sinon.restore();
   });
